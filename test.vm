@@ -1,0 +1,10 @@
+push constant 10
+push constant 12
+lt
+push constant 3
+neg
+and
+push constant 5
+push constant 2
+sub
+eq
