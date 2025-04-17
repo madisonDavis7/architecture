@@ -145,17 +145,23 @@ def getIf_goto(label):
     an input arguement if the top entry of the stack is
     true.
     """
+    #pop and check if true
+    
 
 def getGoto(label):
     """
     Return Hack ML string that will unconditionally 
     jumpt to the input label.
     """
+    return f"{label}, 0;JMP" + "\n"
 
 def getLabel(label):
     """
     Returns Hack ML for a label, eg (label)
     """
+    #using uniqueLabel()
+    label = uniqueLabel()
+    return f"{label}" + "\n"
 
 def getCall(function,nargs):
     """
@@ -195,6 +201,8 @@ def _getPushMem(src):
     Helper function to push memory to location src to stack
     """
     #load address, push value to stack
+    #D=M because you dont need the RAM you want what is in the memory location
+    #src could be local, argument...
     return f"@{src}, D=M, " + getPushD() + "\n"
     
 
@@ -204,6 +212,7 @@ def _getPushLabel(src):
     stack.
     """
     #load address, push value to stack, use A because label in ROM
+    #label so use ROM
     return f"@{src}, D=A, " + getPushD() + "\n"
 
    
@@ -222,6 +231,7 @@ def _getMoveMem(src,dest):
     """
     #load src, store in dest
     #acccess src, move to D, access dest, store in M
+    #after the dest is overwritten 
     return f"@{src}, D=M, @{dest}, M=D\n"
 
 
