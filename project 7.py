@@ -184,6 +184,7 @@ def getCall(function,nargs):
     new_label = uniqueLabel()
 
     #save the new address on stack, using A because address in ROM
+    #new_label is same as return_label
     hdl = f"@{new_label}, D=A, " + getPushD() + "\n"
 
     #need to save what the callers state is 
@@ -192,9 +193,10 @@ def getCall(function,nargs):
         hdl += f"@{segment}, D=M, " + getPushD() + "\n"
 
     #move ARG location using quiz SP - nArgs - 5
+    #cant do earlier because need to save the state of the machine first, no overwriting old ARG (where you startd so need that location)
     hdl += f"@SP, D=M, @{nargs}, D=D-A, @5, D=D-A, @ARG, M=D\n"
 
-    #move LCL to new using SP
+    #move LCL to new using SP, need to keep old LCL to retrun to later, same as ARG
     hdl += "@SP, D=M, @LCL, M=D\n"
 
     #go to the function using function arg, unconditional jump
