@@ -1,4 +1,3 @@
-
 import os
 import sys
 # run with: python project7.py <fileName.vm> > <fileName.asm>
@@ -143,15 +142,19 @@ def getIf_goto(label):
     """
     Returns Hack ML to goto the label specified as
     an input arguement if the top entry of the stack is
-    true.
+    true/1
     """
     #pop and check if true
+    #pop top into D, check if non-zero (true), jump if true
+    return (
+        getPopD() + f"@{label}, D;JNE" + "\n"
+    )
     
 
 def getGoto(label):
     """
     Return Hack ML string that will unconditionally 
-    jumpt to the input label.
+    jump to the input label.
     """
     return f"{label}, 0;JMP" + "\n"
 
@@ -173,6 +176,31 @@ def getCall(function,nargs):
     46-58 in the Project 8 presentation available 
     on the nand2tetris.org website.
     """
+    #make a unique label for the return address
+    SEGMENTS = ['LCL', 'ARG', 'THIS', 'THAT'] #segments to save
+    new_label = uniqueLabel()
+
+    #save the new address on stack, using A because address in ROM
+    hdl = f"@{new_label}, D=A, " + getPushD() + "\n"
+
+    #need to save what the callers state is 
+    for segment in SEGMENTS:
+        #save the segment to the stack, using A because address in ROM
+        hdl += f"@{segment}, D=M, " + getPushD() + "\n"
+
+    #move ARG location using quiz SP - nArgs - 5
+    hdl += f"@SP, D=M, @{nargs}, D=D-A, @5, D=D-A, @ARG, M=D\n"
+
+    #move LCL to new using SP
+    hdl += "@SP, D=M, @LCL, M=D\n"
+
+    #go to the function using function arg, unconditional jump
+    hdl += f"@{function}, 0;JMP\n"
+    hdl += f"({new_label})\n" #return address
+
+    #return the string
+    return hdl 
+
 
 def getFunction(function,nlocal):
     """
