@@ -142,7 +142,7 @@ def getIf_goto(label):
     """
     Returns Hack ML to goto the label specified as
     an input arguement if the top entry of the stack is
-    true/1
+    true/-1
     """
     #pop and check if true
     #pop top into D, check if non-zero (true), jump if true
@@ -162,9 +162,12 @@ def getLabel(label):
     """
     Returns Hack ML for a label, eg (label)
     """
-    #using uniqueLabel()
+    return f"({label})" + "\n"
+    '''
     label = uniqueLabel()
     return f"{label}" + "\n"
+    '''
+    
 
 def getCall(function,nargs):
     """
